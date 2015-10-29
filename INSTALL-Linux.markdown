@@ -17,7 +17,7 @@ Dependencies
 
 Ubuntu and Debian package dependencies
 --------------------------------------
-    apt-get install iptables libcap-dev libssl-dev \
+    apt-get install iptables libcap-dev libssl-dev libtool \
                     libnfnetlink-dev libnetfilter-queue-dev
 
 
@@ -58,6 +58,7 @@ Compiling
 Run:
 
     cd tcpcrypt
+    mkdir m4
     ./bootstrap.sh
     ./configure
     make
