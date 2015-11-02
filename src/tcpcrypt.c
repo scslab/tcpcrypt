@@ -1846,15 +1846,27 @@ static int do_clamp_mss(struct tc *tc, uint16_t *mss)
 	return DIVERT_MODIFY;
 }
 
-static int negotiate_cipher(struct tc *tc, struct tc_cipher_spec *a, int an)
+static int negotiate_cipher(struct tc *tc, uint8_t *data, int an)
 {
+	int i;
+	struct tc_cipher_spec *a = (struct tc_cipher_spec*) data;
 	struct tc_cipher_spec *b = tc->tc_ciphers_pkey;
 	int bn = tc->tc_ciphers_pkey_len / sizeof(*tc->tc_ciphers_pkey);
 	struct tc_cipher_spec *out = &tc->tc_cipher_pkey;
 
+	/* Scrub forward to strip off any variable-length
+	   suboptions. This is safe because cipher subopts
+	   are always fixed length so any variable length
+	   suboptions must either be another encryption spec
+	   or NEXTK1 */
+	for (i=0; i<an; i++) {
+		if (data[i] & TC_OPT_VLEN)
+			break;
+	}
+	an = i;
+
 	tc->tc_pub_cipher_list_len = an * sizeof(*a);
 	memcpy(tc->tc_pub_cipher_list, a, tc->tc_pub_cipher_list_len);
-
 	while (an--) {
 		while (bn--) {
 			if (a->tcs_algo == b->tcs_algo) {
@@ -1944,14 +1956,12 @@ static int can_session_resume(struct tc *tc, uint8_t *data, int len)
 
 static void input_closed_eno(struct tc *tc, uint8_t *data, int len)
 {
-	struct tc_cipher_spec *cipher = (struct tc_cipher_spec*) data;
-
 	check_app_support(tc, data, len);
 
 	if (can_session_resume(tc, data, len))
 		return;
 
-	if (!negotiate_cipher(tc, cipher, len)) {
+	if (!negotiate_cipher(tc, data, len)) {
 		xprintf(XP_ALWAYS, "No cipher\n");
 		tc->tc_state = STATE_DISABLED;
 		return;
@@ -2082,11 +2092,9 @@ static int do_input_hello_sent(struct tc *tc, struct ip *ip, struct tcphdr *tcp)
 
 	check_app_support(tc, eno->toe_opts, len);
 
-	cipher = (struct tc_cipher_spec*) eno->toe_opts;
-
 	/* XXX truncate len as it could go to the variable options (like SID) */
 
-	if (!negotiate_cipher(tc, cipher, len)) {
+	if (!negotiate_cipher(tc, eno->toe_opts, len)) {
 		xprintf(XP_ALWAYS, "No cipher\n");
 		tc->tc_state = STATE_DISABLED;
 
