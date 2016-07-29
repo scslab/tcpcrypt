@@ -61,7 +61,7 @@ If it's not working, the most likely causes are the following.
    * There's a conflict with your existing firewall rules. See the
      firewall setup section in the install guide for your platform.
 
-Visit [http://wiki.github.com/scslab/tcpcrypt/troubleshooting](http://wiki.github.com/scslab/tcpcrypt/troubleshooting) if you're still
+Visit [http://wiki.github.com/sorbo/tcpcrypt/troubleshooting](http://wiki.github.com/sorbo/tcpcrypt/troubleshooting) if you're still
 unable to make it work.
 
 
