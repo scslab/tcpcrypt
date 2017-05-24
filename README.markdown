@@ -27,7 +27,7 @@ traffic on port 80 to tcpcryptd.  When the script exits (on Ctrl-C or `kill`),
 it restores your firewall config to its former state -- *no permanent changes
 are made*.
 
-On Linux, you must first install libnfnetlink, libnetfilter_queue, and libcap.
+On Linux, you must first install `libnfnetlink`, `libnetfilter_queue`, `libnetfilter_conntrack` and `libcap`.
 
 Optional: running `make install` will install `libtcpcrypt` and tcpcrypt
 headers, for building apps that use tcpcrypt's session ID.
