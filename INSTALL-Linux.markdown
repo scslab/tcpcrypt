@@ -13,12 +13,13 @@ Dependencies
  * libnetfilter_queue >= 0.0.16
  * libnetfilter_conntrack >= 1.0.1
  * libcap
+ * libpcap
  * Kernel divert socket support (NFQUEUE)
 
 
 Ubuntu and Debian package dependencies
 --------------------------------------
-    apt-get install iptables libcap-dev libssl-dev \
+    apt-get install iptables libcap-dev libpcap-dev libssl-dev \
                     libnfnetlink-dev \
                     libnetfilter-queue-dev \
                     libnetfilter-conntrack-dev
